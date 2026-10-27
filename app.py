@@ -107,6 +107,13 @@ with left:
         ),
     )
 
+    use_llm = st.toggle(
+        "Usar IA local (Ollama) como segunda opinião",
+        value=False,
+        help="Requer o Ollama em execução. A IA só pode aumentar o risco "
+        "encontrado pelas regras, nunca diminuí-lo.",
+    )
+
     analyze_button = st.button(
         "🛡️ Analisar mensagem",
         type="primary",
@@ -114,8 +121,8 @@ with left:
     )
 
     st.caption(
-        "A análise é feita localmente pelas regras do projeto. "
-        "Os links encontrados não são acessados."
+        "A análise é feita localmente: pelas regras do projeto e, se ativada, "
+        "por um modelo rodando no seu Ollama. Os links encontrados não são acessados."
     )
 
 with right:
@@ -131,6 +138,7 @@ with right:
         <div class="panel">
             <div class="panel-title">02 · Avaliação de risco</div>
             Reúne os indicadores encontrados para classificar o nível de risco.
+            Opcionalmente, um modelo local dá uma segunda opinião.
         </div>
         <div class="panel">
             <div class="panel-title">03 · Recomendações</div>
@@ -145,12 +153,13 @@ if analyze_button:
         st.warning("Cole uma mensagem antes de iniciar a análise.")
     else:
         try:
-            result = analyze_message(message)
+            with st.spinner("Analisando..."):
+                result = analyze_message(message, use_llm=use_llm)
 
             st.divider()
             st.header("Resultado da análise")
 
-            risk = result.get("risk", "Indeterminado")
+            risk = result.get("risk_level", "Indeterminado")
             score = result.get("score", 0)
 
             if risk == "Alto risco":
@@ -164,13 +173,35 @@ if analyze_button:
 
             st.metric("Pontuação de risco", score)
 
+            if use_llm:
+                st.subheader("Segunda opinião da IA")
+                llm = result.get("llm")
+
+                if llm:
+                    st.write(llm["summary"])
+                    st.caption(f"Confiança do modelo: {llm['confidence']}%")
+                else:
+                    st.info(
+                        "A IA não respondeu (Ollama desligado ou modelo "
+                        "indisponível). O resultado usa apenas as regras."
+                    )
+
             indicators = result.get("indicators", [])
 
             st.subheader("Indicadores encontrados")
 
             if indicators:
                 for indicator in indicators:
-                    st.markdown(f"- {indicator}")
+                    with st.expander(
+                        f"{indicator['description']} (+{indicator['points']})"
+                    ):
+                        for item in indicator["evidence"]:
+                            if isinstance(item, dict):  # indicador de URL
+                                st.code(item["url"], language=None)
+                                for reason in item["reasons"]:
+                                    st.markdown(f"- {reason}")
+                            else:
+                                st.markdown(f"- `{item}`")
             else:
                 st.info(
                     "Nenhum indicador configurado foi identificado. "
@@ -208,11 +239,11 @@ st.markdown(
     """
     <div class="disclaimer">
         PhishingLens é uma ferramenta experimental de apoio à análise.
-        A classificação é baseada em regras e não garante a identificação
+        A classificação é baseada em regras e, opcionalmente, na opinião de um
+        modelo de linguagem local; nenhuma das duas garante a identificação
         de todas as ameaças. Não compartilhe senhas, tokens ou outros
         dados confidenciais durante os testes.
     </div>
     """,
     unsafe_allow_html=True,
 )
-
