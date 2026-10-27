@@ -1,0 +1,37 @@
+# Ambiente virtual
+.venv/
+.venv-*/
+venv/
+env/
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Testes
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editores
+.vscode/
+.idea/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ferramentas de agentes locais
+.agents/
+.claude/
+
+# Configurações locais do VS Code
+.vscode/
