@@ -29,12 +29,12 @@ O projeto busca explorar a aplicação de modelos de linguagem na segurança da 
 
 ### Em desenvolvimento
 
-- [ ] Integração do Gemma 4 via API Gemini.
-- [ ] Análise contextual de mensagens com IA.
-- [ ] Identificação de técnicas de engenharia social por IA.
-- [ ] Exibição conjunta dos resultados da análise local e da IA.
-- [ ] Tratamento de erros, respostas inválidas e falhas na API.
-- [ ] Refinamento da interface e da experiência do usuário.
+- [X] Integração do Gemma 4 via API Gemini.
+- [X] Análise contextual de mensagens com IA.
+- [X] Identificação de técnicas de engenharia social por IA.
+- [X] Exibição conjunta dos resultados da análise local e da IA.
+- [X] Tratamento de erros, respostas inválidas e falhas na API.
+- [X] Refinamento da interface e da experiência do usuário.
 
 ## 🧠 Como funciona
 
