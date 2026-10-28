@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 # ---------------------------------------------------------------------------
 
 OLLAMA_HOST = "http://localhost:11434"
-OLLAMA_MODEL = "gemma4:12b"
+OLLAMA_MODEL = "gemma4:e2b"
 OLLAMA_TIMEOUT = float(os.getenv("OLLAMA_TIMEOUT", "180"))
 LLM_MAX_CHARS = 3000 
 #LLM_MAX_CHARS = 6000
